@@ -30,6 +30,7 @@
   border-radius: var(--r-input);
 }
 .lede { font-size: 17px; color: var(--ink-muted); }
+.value { font-size: 17px; font-weight: 500; padding-left: 14px; border-left: 3px solid var(--accent); }
 .ctas { display: flex; flex-wrap: wrap; gap: 12px; }
 .primary, .secondary {
   display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px;

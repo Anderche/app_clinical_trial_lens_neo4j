@@ -36,6 +36,10 @@ export function Hero() {
           Trials since 2023 in Alzheimer’s, obesity and diabetes, heart failure and three major cancers, linked to their
           mechanisms, FDA status and safety signals. Louvain finds the clusters; dashed edges mark cross-area repurposing bridges.
         </p>
+        <p className={styles.value}>
+          Neo4j links drugs, targets and conditions; graph algorithms reveal which mechanisms matter, which cluster together,
+          and which drugs resemble each other.
+        </p>
         <div className={styles.ctas}>
           <a href="#explore" className={styles.primary}>Explore the graph</a>
           <a href="#algorithms" className={styles.secondary}>How it works</a>
