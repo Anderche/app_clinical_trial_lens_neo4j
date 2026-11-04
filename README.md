@@ -112,7 +112,7 @@ pip install neo4j && NEO4J_PASSWORD=localpassword python -m pipeline build --sou
 ## Deploy (Railway)
 
 1. Push the repo to GitHub, then create a Railway service from it. `railway.json` selects the Dockerfile and the `/api/health` health check.
-2. Optional: set the service variable `VITE_GITHUB_URL=https://github.com/<you>/<repo>` so the header's GitHub link points at your repo.
+2. Optional: the header links to this repo by default; set the service variable `VITE_GITHUB_URL` to point it at a fork.
 3. Every push to `main` redeploys. A custom domain is optional.
 
 The image is `python:3.12-slim` plus FastAPI, Uvicorn and the static bundle, with no database and no secrets.

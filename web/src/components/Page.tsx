@@ -7,7 +7,7 @@ import { Legend } from './Legend';
 import { NetworkCanvas } from './NetworkCanvas';
 import styles from './Page.module.css';
 
-export const GITHUB_URL: string = import.meta.env.VITE_GITHUB_URL || 'https://github.com';
+export const GITHUB_URL: string = import.meta.env.VITE_GITHUB_URL || 'https://github.com/Anderche/app_clinical_trial_lens_neo4j';
 
 export function Header() {
   return (
