@@ -56,19 +56,20 @@ web/                      React 18 + Vite + TypeScript + D3 v7 + Zustand + Fuse.
   src/lib/                data loading, store (URL-synced), graph helpers, lens
   src/styles/tokens.css   every color/space/radius token (light theme)
 tests/                    pytest smoke tests (contract, algorithms, API safety)
+pyproject.toml · uv.lock Python deps; `uv sync` creates `.venv`
 Dockerfile · railway.json one service, multi-stage build
 ```
 
 ## Quick start (sample data, no network, $0)
 
-Needs Python 3.11+ and Node 20+.
+Needs [uv](https://docs.astral.sh/uv/), Python 3.11+ (uv can install it), and Node 20+.
 
 ```bash
-pip install -r requirements.txt -r pipeline/requirements.txt
+uv venv && uv sync
 ```
 
 ```bash
-python -m pipeline build
+uv run python -m pipeline build
 ```
 
 ```bash
@@ -76,7 +77,7 @@ cd web && npm ci && npm run build && cd ..
 ```
 
 ```bash
-uvicorn server.main:app --port 8000
+uv run uvicorn server.main:app --port 8000
 ```
 
 Open http://localhost:8000.
@@ -86,13 +87,13 @@ Open http://localhost:8000.
 **Tests:**
 
 ```bash
-python -m pytest -q
+uv run pytest -q
 ```
 
 ## Live data build
 
 ```bash
-python -m pipeline build --source live
+uv run python -m pipeline build --source live
 ```
 
 This pulls ClinicalTrials.gov, ChEMBL and openFDA. Every response is cached in `cache/`, so reruns make zero API calls and stay well under openFDA's 240 requests/minute anonymous limit. Use `--max-pages 2` for a quick, smaller run.
@@ -104,7 +105,7 @@ docker run -d --name neo4j -p 7474:7474 -p 7687:7687 -e NEO4J_AUTH=neo4j/localpa
 ```
 
 ```bash
-pip install neo4j && NEO4J_PASSWORD=localpassword python -m pipeline build --source live --engine neo4j
+uv sync --group neo4j && NEO4J_PASSWORD=localpassword uv run python -m pipeline build --source live --engine neo4j
 ```
 
 `NEO4J_URI` (default `bolt://localhost:7687`) and `NEO4J_USER` (default `neo4j`) are also read. Commit the regenerated `web/public/data/`, then push to redeploy. Rebuild about monthly.

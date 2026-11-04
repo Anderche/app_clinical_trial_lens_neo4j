@@ -21,7 +21,7 @@ def analyze(nodes: dict, links: list[dict], trials: list[dict]) -> tuple[dict, d
     try:
         from neo4j import GraphDatabase
     except ImportError as err:
-        raise SystemExit("pip install neo4j  (needed for --engine neo4j)") from err
+        raise SystemExit("uv sync --group neo4j  (needed for --engine neo4j)") from err
 
     uri = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
     auth = (os.environ.get("NEO4J_USER", "neo4j"), os.environ["NEO4J_PASSWORD"])

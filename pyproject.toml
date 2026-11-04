@@ -1,0 +1,33 @@
+# Production installs only [project.dependencies] (see the Dockerfile).
+# `uv sync` also installs the default groups: dev and pipeline.
+# The Neo4j driver stays opt-in: `uv sync --group neo4j`.
+
+[project]
+name = "clinical-trial-lens"
+version = "0.1.0"
+description = "Interactive drug–target–condition network of recent clinical trials"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+]
+
+[dependency-groups]
+dev = [
+    "httpx2>=2",
+    "pytest>=8",
+]
+pipeline = [
+    "jsonschema>=4.20",
+    "networkx>=3.2",
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+neo4j = [
+    "neo4j>=5.20",
+]
+
+[tool.uv]
+package = false
+default-groups = ["dev", "pipeline"]
