@@ -1,3 +1,0 @@
-# Production server only (the Docker image installs just this).
-fastapi>=0.115
-uvicorn>=0.30

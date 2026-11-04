@@ -1,4 +1,5 @@
 node_modules/
+.venv/
 web/dist/
 cache/
 __pycache__/
@@ -8,3 +9,4 @@ __pycache__/
 temp/
 # web/public/data/ is committed on purpose: production serves it as-is.
 .claude/
+_reference/
