@@ -73,8 +73,14 @@
 @media (max-width: 767px) {
   .headerInner { padding-top: 8px; padding-bottom: 8px; gap: 0 16px; }
   .nav { gap: 0 16px; font-size: 14px; }
-  .hero { padding-top: 12px; padding-bottom: 40px; gap: 24px; }
-  .explorer { order: -1; }   /* graph first on phones */
+  .wordmark { font-size: 18px; }
+  .hero { padding-top: 12px; padding-bottom: 40px; gap: 16px; }
+  /* Phones: headline and call to action sit above the graph; the rest of the intro follows it. */
+  .intro { display: contents; }
+  .title { order: -3; font-size: 24px; line-height: 1.15; }
+  .ctas { order: -2; flex-wrap: nowrap; gap: 8px; }
+  .primary, .secondary { flex: 1; justify-content: center; min-height: 40px; padding: 0 12px; font-size: 14px; white-space: nowrap; }
+  .explorer { order: -1; }
   /* The graph tool runs edge to edge: the full filter bar, canvas and legend fit the viewport width. */
   .explorer { margin: 0 calc(var(--gutter) * -1); width: auto; }
   .graphPanel { border-left: 0; border-right: 0; border-radius: 0; }

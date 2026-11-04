@@ -31,7 +31,7 @@ export function Hero() {
     <section id="top" className={`container ${styles.hero}`}>
       <div className={styles.intro}>
         <span className={styles.eyebrow}>(:Drug)-[:TARGETS]-&gt;(:Target)</span>
-        <h1>The drug pipeline, as a living network.</h1>
+        <h1 className={styles.title}>The drug pipeline, as a living network.</h1>
         <p className={styles.lede}>
           Trials since 2023 in Alzheimer’s, obesity and diabetes, heart failure and three major cancers, linked to their
           mechanisms, FDA status and safety signals. Louvain finds the clusters; dashed edges mark cross-area repurposing bridges.
