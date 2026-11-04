@@ -1,0 +1,38 @@
+/* Design tokens — mockup B translated to a light theme. Components read only these. */
+:root {
+  --bg: #F7F8FB;
+  --surface: #FFFFFF;
+  --surface-2: #F1F3F8;
+  --border: #E3E7EF;
+  --ink: #0F1A2E;
+  --ink-muted: #5B6880;
+  --accent: #0E7490;
+  --accent-ink: #FFFFFF;
+  --edge: #C5CDDB;
+  --bridge: #A21C5B;
+
+  --area-alz: #6D4BC4;
+  --area-obes: #C8640F;
+  --area-hf: #2F8F5B;
+  --area-onc: #1C7FB8;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --s-1: 4px; --s-2: 8px; --s-3: 16px; --s-4: 24px; --s-5: 32px; --s-6: 48px; --s-7: 80px;
+  --r-input: 6px; --r-card: 12px; --r-chip: 999px;
+  --shadow-drawer: 0 8px 24px rgb(15 26 46 / 0.08);
+  --max-w: 1280px;
+  --gutter: 24px;
+}
+
+/* Area hue classes: any element (HTML or SVG) gets --hue from its area + tint. */
+.area-alz { --hue-base: var(--area-alz); }
+.area-obes { --hue-base: var(--area-obes); }
+.area-hf { --hue-base: var(--area-hf); }
+.area-onc { --hue-base: var(--area-onc); }
+[class*='area-'] { --hue: var(--hue-base); }
+.tint-1 { --hue: color-mix(in srgb, var(--hue-base) 72%, #fff); }
+.tint-2 { --hue: color-mix(in srgb, var(--hue-base) 56%, #fff); }
+.tint-3 { --hue: color-mix(in srgb, var(--hue-base) 44%, #fff); }

@@ -1,0 +1,10 @@
+node_modules/
+web/dist/
+cache/
+__pycache__/
+.pytest_cache/
+.env
+.DS_Store
+temp/
+# web/public/data/ is committed on purpose: production serves it as-is.
+.claude/

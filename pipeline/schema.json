@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "graph.json",
+  "type": "object",
+  "required": ["nodes", "links", "communities"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label", "community", "pagerank", "area", "areas", "x", "y"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^(chembl|drug|tgt|cond):[A-Za-z0-9_.-]+$"},
+          "type": {"enum": ["drug", "target", "condition"]},
+          "label": {"type": "string", "minLength": 1},
+          "community": {"type": "integer", "minimum": 0},
+          "pagerank": {"type": "number", "minimum": 0},
+          "area": {"enum": ["alz", "obes", "hf", "onc"]},
+          "areas": {"type": "array", "items": {"enum": ["alz", "obes", "hf", "onc"]}},
+          "maxPhase": {"enum": ["phase1", "phase2", "phase3", "phase4", "approved"]},
+          "sponsors": {"type": "array", "items": {"type": "string"}},
+          "firstStart": {"type": "integer"},
+          "years": {"type": "array", "items": {"type": "integer"}},
+          "bridge": {"type": "boolean"},
+          "x": {"type": "number"},
+          "y": {"type": "number"}
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "target", "type", "bridge"],
+        "properties": {
+          "source": {"type": "string"},
+          "target": {"type": "string"},
+          "type": {"enum": ["TARGETS", "TESTED_IN"]},
+          "trials": {"type": "integer"},
+          "bridge": {"type": "boolean"}
+        }
+      }
+    },
+    "communities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "size", "area", "tint"],
+        "properties": {
+          "id": {"type": "integer"},
+          "label": {"type": "string"},
+          "size": {"type": "integer"},
+          "area": {"enum": ["alz", "obes", "hf", "onc"]},
+          "tint": {"type": "integer", "minimum": 0}
+        }
+      }
+    }
+  }
+}

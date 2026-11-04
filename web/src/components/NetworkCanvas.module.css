@@ -1,0 +1,108 @@
+/* SVG nodes are styled only by class; hues come from the .area-* / .tint-* tokens. */
+.svg {
+  display: block;
+  width: 100%;
+  height: 640px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.svg:active { cursor: grabbing; }
+
+/* ---- edges ---- */
+.links :global(.link) {
+  stroke: var(--edge);
+  stroke-width: 1px;
+  stroke-opacity: 0.6;
+  vector-effect: non-scaling-stroke;
+  transition: stroke-opacity 150ms, opacity 150ms;
+}
+.links :global(.link--bridge) {
+  stroke: var(--bridge);
+  stroke-width: 1.5px;
+  stroke-dasharray: 5 4;
+  stroke-opacity: 0.75;
+}
+.svg:global(.hide-bridges) .links :global(.link--bridge) {
+  stroke: var(--edge);
+  stroke-width: 1px;
+  stroke-dasharray: none;
+  stroke-opacity: 0.6;
+}
+.links :global(.link.is-active) {
+  stroke: var(--hue, var(--accent));
+  stroke-width: 2px;
+  stroke-opacity: 1;
+}
+.links :global(.link.is-dimmed) { opacity: 0.15; }
+.links :global(.link.is-faded) { opacity: 0.1; }
+
+.hit {
+  stroke: transparent;
+  stroke-width: 8px;
+  vector-effect: non-scaling-stroke;
+  cursor: help;
+}
+
+/* ---- nodes ---- */
+.svg :global(.node) {
+  cursor: pointer;
+  color: var(--hue);
+  transition: opacity 150ms;
+}
+.svg :global(.node.is-dimmed) { opacity: 0.15; }
+.svg :global(.node.is-faded) { opacity: 0.1; }
+
+.svg :global(.glyph) {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 150ms ease-out;
+}
+.svg :global(.node.is-selected .glyph) { transform: scale(1.08); }
+
+.svg :global(.halo) { fill: var(--hue); opacity: 0; transition: opacity 150ms; }
+.svg :global(.node.is-selected .halo) { opacity: 0.25; }
+
+/* target: filled circle + white crosshair */
+.svg :global(.node--target .shape) { fill: var(--hue); }
+.svg :global(.icon--on-fill) { color: #fff; }
+
+/* drug: 2px ring with a 14% fill + pill */
+.svg :global(.node--drug .shape) {
+  fill: color-mix(in srgb, var(--hue) 14%, var(--surface));
+  stroke: var(--hue);
+  stroke-width: 2px;
+}
+.svg :global(.node--drug.is-pinned .shape) { stroke-dasharray: 3 2; }
+
+/* condition: rounded square + area icon */
+.svg :global(.node--condition .shape) {
+  fill: var(--surface);
+  stroke: var(--hue);
+  stroke-width: 1.5px;
+}
+
+.svg :global(.icon) { pointer-events: none; }
+
+/* labels: Plex Sans 500 12px with a 3px surface halo */
+.svg :global(.label) {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 12px;
+  fill: var(--ink);
+  text-anchor: middle;
+  stroke: var(--surface);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  pointer-events: none;
+}
+.svg :global(.label--condition) { font-weight: 600; }
+.svg :global(.label--drug) { display: none; fill: var(--ink-muted); }
+.svg :global(.label--drug.label--key),
+.svg:global(.is-zoomed) :global(.label--drug),
+.svg :global(.node.is-lit .label--drug) { display: inline; }
+
+@media (max-width: 767px) {
+  .svg { height: 70vh; }
+}

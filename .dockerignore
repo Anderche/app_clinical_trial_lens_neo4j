@@ -1,0 +1,11 @@
+**/node_modules
+web/dist
+cache
+temp
+pipeline
+tests
+.git
+.claude
+**/__pycache__
+**/.DS_Store
+*.md
