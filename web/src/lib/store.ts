@@ -6,12 +6,12 @@ export interface Filters {
   areas: Area[];
   phases: Phase[];
   years: [number, number];
-  community: number | null;
+  communities: number[];
   sponsor: string;
 }
 
 export const DEFAULT_YEARS: [number, number] = [2023, 2026];
-export const emptyFilters = (): Filters => ({ areas: [], phases: [], years: [...DEFAULT_YEARS], community: null, sponsor: '' });
+export const emptyFilters = (): Filters => ({ areas: [], phases: [], years: [...DEFAULT_YEARS], communities: [], sponsor: '' });
 
 interface State {
   data: CoreData | null;
@@ -98,7 +98,7 @@ export function readUrl(): Partial<State> {
   f.areas = list('areas', AREAS);
   f.phases = list('phases', PHASES);
   if (years?.length === 2 && years.every((y) => y >= DEFAULT_YEARS[0] && y <= DEFAULT_YEARS[1])) f.years = [years[0], years[1]];
-  if (q.has('community')) f.community = Number(q.get('community'));
+  f.communities = (q.get('communities') ?? q.get('community') ?? '').split(',').filter(Boolean).map(Number).filter(Number.isInteger);
   f.sponsor = q.get('sponsor') ?? '';
   return {
     filters: f,
@@ -117,7 +117,7 @@ export function syncUrl() {
     if (f.areas.length) q.set('areas', f.areas.join(','));
     if (f.phases.length) q.set('phases', f.phases.join(','));
     if (f.years[0] !== DEFAULT_YEARS[0] || f.years[1] !== DEFAULT_YEARS[1]) q.set('years', f.years.join('-'));
-    if (f.community !== null) q.set('community', String(f.community));
+    if (f.communities.length) q.set('communities', f.communities.join(','));
     if (f.sponsor) q.set('sponsor', f.sponsor);
     if (s.sizeBy === 'uniform') q.set('size', 'uniform');
     if (s.colorBy === 'area') q.set('color', 'area');

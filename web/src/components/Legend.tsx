@@ -9,7 +9,8 @@ export function Legend() {
   const colorBy = useStore((s) => s.colorBy);
   const set = useStore((s) => s.set);
   const setFilters = useStore((s) => s.setFilters);
-  const community = useStore((s) => s.filters.community);
+  const selected = useStore((s) => s.filters.communities);
+  const toggle = (id: number) => setFilters({ communities: selected.includes(id) ? selected.filter((c) => c !== id) : [...selected, id] });
 
   return (
     <div className={styles.legend}>
@@ -24,13 +25,16 @@ export function Legend() {
         </label>
       </div>
       {colorBy === 'community' && (
-        <div className={styles.communities} role="group" aria-label="Louvain communities (click to filter)">
+        <div className={styles.communities} role="group" aria-label="Louvain communities (select one or more to filter)">
           {[...(g?.communities.values() ?? [])].map((c) => (
             <button key={c.id} type="button" className={`${styles.comm} area-${c.area} tint-${Math.min(c.tint, 3)}`}
-              aria-pressed={community === c.id} onClick={() => setFilters({ community: community === c.id ? null : c.id })}>
+              aria-pressed={selected.includes(c.id)} onClick={() => toggle(c.id)}>
               <span className={styles.swatch} aria-hidden />{c.label}
             </button>
           ))}
+          {selected.length > 0 && (
+            <button type="button" className={styles.clear} onClick={() => setFilters({ communities: [] })}>Clear</button>
+          )}
         </div>
       )}
       <span className={styles.algo}>gds.louvain · gds.pageRank</span>

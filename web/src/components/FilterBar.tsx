@@ -65,13 +65,19 @@ export function FilterBar() {
         </select>
       </label>
 
-      <label className={styles.field}>
-        <span className="sr-only">Community</span>
-        <select value={f.community ?? ''} onChange={(e) => setFilters({ community: e.target.value === '' ? null : Number(e.target.value) })}>
-          <option value="">All communities</option>
-          {[...(g?.communities.values() ?? [])].map((c) => <option key={c.id} value={c.id}>{c.label} ({c.size})</option>)}
-        </select>
-      </label>
+      <details className={styles.menu}>
+        <summary>Community{f.communities.length ? ` (${f.communities.length})` : ''} <ChevronDown size={14} aria-hidden /></summary>
+        <fieldset className={styles.popover}>
+          <legend className="sr-only">Louvain communities</legend>
+          {[...(g?.communities.values() ?? [])].map((c) => (
+            <label key={c.id}>
+              <input type="checkbox" checked={f.communities.includes(c.id)}
+                onChange={() => setFilters({ communities: toggle(f.communities, c.id) })} />
+              {c.label} ({c.size})
+            </label>
+          ))}
+        </fieldset>
+      </details>
 
       <label className={styles.field}>
         <span className="sr-only">Sponsor</span>

@@ -4,5 +4,6 @@
 .heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 0 24px; }
 
 @media (max-width: 767px) {
-  .section { padding: 48px 0; }
+  .section { padding: 32px 0; }
+  .sub { margin-bottom: 20px; }
 }

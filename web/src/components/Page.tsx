@@ -82,7 +82,10 @@ export function Footer() {
     <footer className={styles.footer}>
       <div className={`container ${styles.footerInner}`}>
         <span>Data: ClinicalTrials.gov · ChEMBL · openFDA{meta ? ` · built ${meta.buildDate} (${meta.source}, ${meta.engine})` : ''}</span>
-        <span>Neo4j + Graph Data Science · Icons: Lucide (ISC) · <strong>Not medical advice</strong></span>
+        <span>
+          Designed by <a href={GITHUB_URL} target="_blank" rel="noreferrer">Anders Kiss</a> · Neo4j + Graph Data Science ·
+          Icons: Lucide (ISC) · <strong>Not medical advice</strong>
+        </span>
       </div>
     </footer>
   );

@@ -26,4 +26,11 @@
 }
 .comm[aria-pressed='true'] { border-color: var(--hue); background: color-mix(in srgb, var(--hue) 10%, var(--surface)); }
 .swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--hue); }
+.clear { min-height: 28px; padding: 0 8px; border: 0; background: none; color: var(--accent); font-size: 12px; font-weight: 600; }
 .algo { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
+
+@media (max-width: 767px) {
+  .legend { padding: 8px 12px; gap: 8px 12px; }
+  .shapes { gap: 8px 12px; }
+  .algo { margin-left: 0; }
+}

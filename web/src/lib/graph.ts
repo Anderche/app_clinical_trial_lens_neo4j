@@ -38,10 +38,10 @@ const drugFiltersActive = (f: Filters) =>
 /** Ids that pass the filters, or null when nothing is filtered. Filtered-out nodes fade, never vanish. */
 export function visibleIds(g: ViewGraph, f: Filters): Set<string> | null {
   const drugLevel = drugFiltersActive(f);
-  if (!drugLevel && !f.areas.length && f.community === null) return null;
+  if (!drugLevel && !f.areas.length && !f.communities.length) return null;
   const sponsor = f.sponsor.trim().toLowerCase();
   const base = (n: GNode) =>
-    (f.community === null || n.community === f.community) &&
+    (!f.communities.length || f.communities.includes(n.community)) &&
     (!f.areas.length || n.areas.some((a) => f.areas.includes(a)));
   const drugOk = (n: GNode) =>
     base(n) &&

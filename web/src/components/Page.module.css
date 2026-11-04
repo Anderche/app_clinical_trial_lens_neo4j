@@ -70,7 +70,15 @@
   .intro { padding-top: 0; }
 }
 @media (max-width: 767px) {
-  .hero { padding-top: 24px; gap: 32px; }
+  .headerInner { padding-top: 8px; padding-bottom: 8px; gap: 0 16px; }
+  .nav { gap: 0 16px; font-size: 14px; }
+  .hero { padding-top: 12px; padding-bottom: 40px; gap: 24px; }
   .explorer { order: -1; }   /* graph first on phones */
+  /* The graph tool runs edge to edge: the full filter bar, canvas and legend fit the viewport width. */
+  .explorer { margin: 0 calc(var(--gutter) * -1); width: auto; }
+  .graphPanel { border-left: 0; border-right: 0; border-radius: 0; }
+  .intro { gap: 16px; }
+  .notice { padding: 10px 12px; }
   .hint { display: none; }
+  .footerInner { padding-top: 16px; padding-bottom: 16px; gap: 8px; }
 }

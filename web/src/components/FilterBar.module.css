@@ -75,5 +75,8 @@
 }
 
 @media (max-width: 767px) {
-  .chip { min-height: 44px; }
+  .bar { padding: 8px 12px; gap: 6px; }
+  .chips { gap: 4px; }
+  .chip { min-height: 44px; padding: 0 10px; }
+  .sponsor { width: 120px; }
 }

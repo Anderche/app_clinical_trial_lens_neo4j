@@ -71,8 +71,12 @@ export function AlgorithmCards() {
         <div className={styles.comms}>
           {comms.slice(0, 6).map((c) => (
             <button key={c.id} type="button" className={`${styles.comm} area-${c.area} tint-${Math.min(c.tint, 3)}`}
-              aria-pressed={s.filters.community === c.id}
-              onClick={() => { s.setFilters({ community: s.filters.community === c.id ? null : c.id }); toGraph(); }}>
+              aria-pressed={s.filters.communities.includes(c.id)}
+              onClick={() => {
+                const on = s.filters.communities;
+                s.setFilters({ communities: on.includes(c.id) ? on.filter((x) => x !== c.id) : [...on, c.id] });
+                toGraph();
+              }}>
               <span className={styles.commName}>{c.label} <span className={styles.num}>{c.size}</span></span>
               <span className={styles.commSub}>{c.topTargets.join(' · ')}</span>
             </button>

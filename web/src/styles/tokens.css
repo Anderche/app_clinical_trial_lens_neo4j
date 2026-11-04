@@ -27,6 +27,10 @@
   --gutter: 24px;
 }
 
+@media (max-width: 767px) {
+  :root { --gutter: 12px; }
+}
+
 /* Area hue classes: any element (HTML or SVG) gets --hue from its area + tint. */
 .area-alz { --hue-base: var(--area-alz); }
 .area-obes { --hue-base: var(--area-obes); }
