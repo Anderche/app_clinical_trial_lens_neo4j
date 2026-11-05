@@ -95,6 +95,8 @@ export interface Lane {
   end: number;
   trialCount: number;
   brand: string | null;
+  /** One block per trial start year: trials started and the highest phase among them. */
+  byYear: { year: number; n: number; phase: number }[];
   actions: { date: string; label: string }[];
 }
 

@@ -125,9 +125,14 @@ def timeline(ds: dict, nodes: dict) -> list[dict]:
         d = by_name.get(name)
         if not d or d["id"] not in nodes:
             continue
-        years = [t["start"] for t in ds["trials"] if d["id"] in t["drugs"]]
+        mine = [t for t in ds["trials"] if d["id"] in t["drugs"]]
+        years = [t["start"] for t in mine]
+        # One block per start year: trial count and the highest phase among that year's starts.
+        by_year = [{"year": y, "n": sum(t["start"] == y for t in mine),
+                    "phase": max(int(t["phase"]) for t in mine if t["start"] == y)}
+                   for y in sorted(set(years))]
         actions = [a for a in (d.get("fda") or {}).get("actions", []) if a["date"][:4] >= str(YEARS[0])]
         lanes.append({"id": d["id"], "label": name, "area": nodes[d["id"]]["area"],
-                      "start": min(years), "end": YEARS[1], "trialCount": len(years), "actions": actions,
-                      "brand": (d.get("fda") or {}).get("brand")})
+                      "start": min(years), "end": YEARS[1], "trialCount": len(years), "byYear": by_year,
+                      "actions": actions, "brand": (d.get("fda") or {}).get("brand")})
     return lanes[:6]
