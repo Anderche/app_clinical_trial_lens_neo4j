@@ -35,7 +35,7 @@
   stroke-opacity: 1;
 }
 .links :global(.link.is-dimmed) { opacity: 0.15; }
-.links :global(.link.is-faded) { opacity: 0.1; }
+.links :global(.link.is-faded) { opacity: 0.15; }
 
 .hit {
   stroke: transparent;
@@ -51,7 +51,11 @@
   transition: opacity 150ms;
 }
 .svg :global(.node.is-dimmed) { opacity: 0.15; }
-.svg :global(.node.is-faded) { opacity: 0.1; }
+/* Outside the active filters: faded for context (no labels, no hover), or hidden entirely. */
+.svg :global(.node.is-faded) { opacity: 0.15; pointer-events: none; }
+.svg :global(.node.is-faded .label) { display: none; }
+.svg :global(.hit.is-faded) { pointer-events: none; }
+.svg:global(.isolate-hide) :global(.is-faded) { display: none; }
 
 .svg :global(.glyph) {
   transform-box: fill-box;

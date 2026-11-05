@@ -69,18 +69,26 @@ export function AlgorithmCards() {
         <h3>Which mechanisms move together?</h3>
         <p className={styles.copy}>Finds communities of drugs, targets and conditions, which often cross disease lines.</p>
         <div className={styles.comms}>
-          {comms.slice(0, 6).map((c) => (
-            <button key={c.id} type="button" className={`${styles.comm} area-${c.area} tint-${Math.min(c.tint, 3)}`}
-              aria-pressed={s.filters.communities.includes(c.id)}
-              onClick={() => {
-                const on = s.filters.communities;
-                s.setFilters({ communities: on.includes(c.id) ? on.filter((x) => x !== c.id) : [...on, c.id] });
-                toGraph();
-              }}>
-              <span className={styles.commName}>{c.label} <span className={styles.num}>{c.size}</span></span>
-              <span className={styles.commSub}>{c.topTargets.join(' · ')}</span>
-            </button>
-          ))}
+          {comms.slice(0, 6).map((c) => {
+            const only = s.filters.communities.length === 1 && s.filters.communities[0] === c.id;
+            return (
+              <div key={c.id} className={`${styles.commCell} area-${c.area} tint-${Math.min(c.tint, 3)}`}>
+                <button type="button" className={styles.comm} aria-pressed={s.filters.communities.includes(c.id)}
+                  onClick={() => {
+                    const on = s.filters.communities;
+                    s.setFilters({ communities: on.includes(c.id) ? on.filter((x) => x !== c.id) : [...on, c.id] });
+                    toGraph();
+                  }}>
+                  <span className={styles.commName}>{c.label} <span className={styles.num}>{c.size}</span></span>
+                  <span className={styles.commSub}>{c.topTargets.join(' · ')}</span>
+                </button>
+                <button type="button" className={styles.only} onClick={() => { s.isolate(c.id); toGraph(); }}
+                  aria-label={only ? 'Show all communities' : `Show only ${c.label}`}>
+                  {only ? 'all' : 'only'}
+                </button>
+              </div>
+            );
+          })}
         </div>
         <button type="button" className={styles.apply} aria-pressed={s.colorBy === 'community'}
           onClick={() => { s.set({ colorBy: s.colorBy === 'community' ? 'area' : 'community' }); toGraph(); }}>

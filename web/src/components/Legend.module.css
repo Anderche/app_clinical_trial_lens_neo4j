@@ -18,13 +18,28 @@
 .toggle input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
 
 .communities { display: flex; flex-wrap: wrap; gap: 6px; }
+/* Each pill: the toggle (multiselect) plus a one-tap "only" that isolates the community. */
 .comm {
-  display: inline-flex; align-items: center; gap: 6px;
-  min-height: 28px; padding: 0 10px;
+  display: inline-flex; align-items: stretch;
   border: 1px solid var(--border); border-radius: var(--r-chip);
-  background: var(--surface); color: var(--ink); font-size: 12px;
+  background: var(--surface); color: var(--ink); font-size: 12px; overflow: hidden;
 }
-.comm[aria-pressed='true'] { border-color: var(--hue); background: color-mix(in srgb, var(--hue) 10%, var(--surface)); }
+.comm.on { border-color: var(--hue); background: color-mix(in srgb, var(--hue) 10%, var(--surface)); }
+.commToggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 28px; padding: 0 8px 0 10px; border: 0; background: none; font-size: 12px;
+}
+.only {
+  min-height: 28px; padding: 0 9px; border: 0; border-left: 1px solid var(--border);
+  background: none; color: var(--ink-muted); font-size: 11px; font-weight: 600;
+}
+.only:hover { color: var(--accent); background: var(--surface-2); }
+.comm.on .only { border-left-color: color-mix(in srgb, var(--hue) 40%, var(--border)); }
+
+.mode { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-input); overflow: hidden; }
+.mode button { min-height: 28px; padding: 0 10px; border: 0; background: var(--surface); color: var(--ink-muted); font-size: 12px; }
+.mode button + button { border-left: 1px solid var(--border); }
+.mode button[aria-pressed='true'] { background: var(--surface-2); color: var(--ink); font-weight: 600; }
 .swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--hue); }
 .clear { min-height: 28px; padding: 0 8px; border: 0; background: none; color: var(--accent); font-size: 12px; font-weight: 600; }
 .algo { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
@@ -33,4 +48,5 @@
   .legend { padding: 8px 12px; gap: 8px 12px; }
   .shapes { gap: 8px 12px; }
   .algo { margin-left: 0; }
+  .commToggle, .only, .mode button { min-height: 36px; }
 }

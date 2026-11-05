@@ -70,7 +70,7 @@ export function Hero() {
           <div className={styles.canvasWrap}>
             <NetworkCanvas />
             <BridgesPanel />
-            <p className={styles.hint} aria-hidden>Scroll to zoom · drag to pan or pin · hover for Cypher · Esc clears</p>
+            <p className={styles.hint} aria-hidden>Scroll, pinch or +/− to zoom · drag to pan or pin · hover for Cypher · Esc clears</p>
           </div>
           <figcaption><Legend /></figcaption>
         </figure>

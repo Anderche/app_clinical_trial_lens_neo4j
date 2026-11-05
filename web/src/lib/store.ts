@@ -26,6 +26,10 @@ interface State {
   colorBy: 'community' | 'area';
   showBridges: boolean;
   similarFocus: boolean;
+  /** How nodes outside the active filters are drawn: faded for context, or hidden. */
+  isolateMode: 'fade' | 'hide';
+  /** Bumped to ask the canvas to fit the visible nodes. */
+  fitRequest: number;
   /** Bumped to ask the canvas to pan to a node. */
   centerOn: { id: string; n: number } | null;
 
@@ -34,7 +38,10 @@ interface State {
   hover: (id: string | null) => void;
   setFilters: (f: Partial<Filters>) => void;
   resetFilters: () => void;
-  set: (p: Partial<Pick<State, 'sizeBy' | 'colorBy' | 'showBridges' | 'similarFocus'>>) => void;
+  set: (p: Partial<Pick<State, 'sizeBy' | 'colorBy' | 'showBridges' | 'similarFocus' | 'isolateMode'>>) => void;
+  /** One tap: show only this community, or everything again if it is already the only one. */
+  isolate: (community: number) => void;
+  requestFit: () => void;
   addExtra: (d: Detail) => void;
 }
 
@@ -49,6 +56,8 @@ export const useStore = create<State>()((set, get) => ({
   colorBy: 'community',
   showBridges: true,
   similarFocus: false,
+  isolateMode: 'fade',
+  fitRequest: 0,
   centerOn: null,
 
   setData: (data) => set({ data }),
@@ -62,6 +71,12 @@ export const useStore = create<State>()((set, get) => ({
   setFilters: (f) => set((s) => ({ filters: { ...s.filters, ...f } })),
   resetFilters: () => set({ filters: emptyFilters() }),
   set: (p) => set(p),
+  requestFit: () => set((s) => ({ fitRequest: s.fitRequest + 1 })),
+  isolate: (community) =>
+    set((s) => {
+      const only = s.filters.communities.length === 1 && s.filters.communities[0] === community;
+      return { filters: { ...s.filters, communities: only ? [] : [community] }, fitRequest: s.fitRequest + 1 };
+    }),
   addExtra: (d) => {
     const { data, extraNodes } = get();
     if (!data || extraNodes.some((n) => n.id === d.id) || data.graph.nodes.some((n) => n.id === d.id)) return;
@@ -106,6 +121,7 @@ export function readUrl(): Partial<State> {
     sizeBy: q.get('size') === 'uniform' ? 'uniform' : 'pagerank',
     colorBy: q.get('color') === 'area' ? 'area' : 'community',
     showBridges: q.get('bridges') !== 'off',
+    isolateMode: q.get('isolate') === 'hide' ? 'hide' : 'fade',
   };
 }
 
@@ -122,6 +138,7 @@ export function syncUrl() {
     if (s.sizeBy === 'uniform') q.set('size', 'uniform');
     if (s.colorBy === 'area') q.set('color', 'area');
     if (!s.showBridges) q.set('bridges', 'off');
+    if (s.isolateMode === 'hide') q.set('isolate', 'hide');
     const next = q.toString() ? `?${q}` : location.pathname;
     if (next !== location.search && !(next === location.pathname && !location.search)) {
       history.replaceState(null, '', `${next}${location.hash}`);

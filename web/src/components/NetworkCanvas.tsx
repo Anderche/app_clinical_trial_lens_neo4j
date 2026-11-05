@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { drag } from 'd3-drag';
 import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY, type Simulation, type SimulationNodeDatum } from 'd3-force';
 import { scaleSqrt } from 'd3-scale';
 import { select } from 'd3-selection';
 import 'd3-transition';
-import { zoom, zoomIdentity, type ZoomBehavior } from 'd3-zoom';
+import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
 import { loadDetail } from '../lib/data';
 import { hueClass, useViewGraph, visibleIds, type ViewGraph } from '../lib/graph';
 import { useLens } from '../lib/lens';
@@ -12,6 +12,7 @@ import { useStore } from '../lib/store';
 import type { GNode } from '../lib/types';
 import { AREA_ICON, Crosshair, Pill } from './icons';
 import styles from './NetworkCanvas.module.css';
+import { ZoomControls } from './ZoomControls';
 
 interface SimNode extends SimulationNodeDatum {
   id: string;
@@ -21,6 +22,7 @@ interface SimNode extends SimulationNodeDatum {
 }
 
 const KEY_DRUG_LABELS = 14; // the top-PageRank drugs keep their labels at every zoom level
+const ZOOM_STEP = 1.4;
 
 function useRadius(g: ViewGraph | null, sizeBy: 'pagerank' | 'uniform') {
   return useMemo(() => {
@@ -58,6 +60,8 @@ export function NetworkCanvas() {
   const centerOn = useStore((s) => s.centerOn);
   const similarFocus = useStore((s) => s.similarFocus);
   const selectedId = useStore((s) => s.selectedId);
+  const isolateMode = useStore((s) => s.isolateMode);
+  const fitRequest = useStore((s) => s.fitRequest);
   const radius = useRadius(g, sizeBy);
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -66,6 +70,7 @@ export function NetworkCanvas() {
   const simNodes = useRef(new Map<string, SimNode>());
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown>>();
   const fitted = useRef(false);
+  const initialView = useRef<ZoomTransform>();
   const [similarIds, setSimilarIds] = useState<string[]>([]);
   const reducedMotion = useMemo(() => matchMedia('(prefers-reduced-motion: reduce)').matches, []);
 
@@ -86,6 +91,43 @@ export function NetworkCanvas() {
     zoomRef.current = z;
     select(svg).call(z).on('dblclick.zoom', null);
   }, []);
+
+  /** Frame the given nodes (all when null), using their current simulated positions. */
+  const fitTo = useCallback((ids: Set<string> | null, animate = true, maxK = 1.6) => {
+    const svg = svgRef.current, z = zoomRef.current;
+    const pts = [...simNodes.current.values()].filter((n) => !ids || ids.has(n.id));
+    if (!svg || !z || !pts.length) return undefined;
+    const xs = pts.map((n) => n.x!), ys = pts.map((n) => n.y!);
+    const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+    const { width, height } = svg.getBoundingClientRect();
+    const k = Math.min(width / (x1 - x0 + 120), height / (y1 - y0 + 120), maxK);
+    const t = zoomIdentity.translate(width / 2 - k * (x0 + x1) / 2, height / 2 - k * (y0 + y1) / 2).scale(k);
+    if (animate && !reducedMotion) select(svg).transition().duration(500).call(z.transform, t);
+    else select(svg).call(z.transform, t);
+    return t;
+  }, [reducedMotion]);
+
+  const onZoom = useCallback((action: 'in' | 'out' | 'fit' | 'reset') => {
+    const svg = svgRef.current, z = zoomRef.current;
+    if (!svg || !z) return;
+    const tr = select(svg).transition().duration(reducedMotion ? 0 : 250);
+    if (action === 'in') tr.call(z.scaleBy, ZOOM_STEP);
+    else if (action === 'out') tr.call(z.scaleBy, 1 / ZOOM_STEP);
+    else if (action === 'fit') fitTo(g ? visibleIds(g, useStore.getState().filters) : null);
+    else if (initialView.current) tr.call(z.transform, initialView.current);
+  }, [g, fitTo, reducedMotion]);
+
+  const onKey = (e: KeyboardEvent) => {
+    const action = ({ '+': 'in', '=': 'in', '-': 'out', '_': 'out', '0': 'fit' } as const)[e.key as '+'];
+    if (!action) return;
+    e.preventDefault();
+    onZoom(action);
+  };
+
+  // ---- fit on request (isolating a community, clearing it) ----
+  useEffect(() => {
+    if (fitRequest && g) fitTo(visibleIds(g, useStore.getState().filters));
+  }, [fitRequest]); // only a new request refits, not every graph or filter change
 
   // ---- layout: precomputed x/y, then a short settle; drag pins a node ----
   useLayoutEffect(() => {
@@ -114,12 +156,7 @@ export function NetworkCanvas() {
 
     if (!fitted.current) {
       fitted.current = true;
-      const xs = nodes.map((n) => n.x!), ys = nodes.map((n) => n.y!);
-      const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-      const { width, height } = svg.getBoundingClientRect();
-      const k = Math.min(width / (x1 - x0 + 120), height / (y1 - y0 + 120), 1.4);
-      const t = zoomIdentity.translate(width / 2 - k * (x0 + x1) / 2, height / 2 - k * (y0 + y1) / 2).scale(k);
-      select(svg).call(zoomRef.current!.transform, t);
+      initialView.current = fitTo(null, false, 1.4);
     }
 
     let sim: Simulation<SimNode, undefined> | null = null;
@@ -150,7 +187,7 @@ export function NetworkCanvas() {
       ).on('dblclick', () => { n.fx = n.fy = null; el.classList.remove('is-pinned'); sim?.alpha(0.2).restart(); });
     }
     return () => { sim?.stop(); };
-  }, [g, radius, reducedMotion]);
+  }, [g, radius, reducedMotion, fitTo]);
 
   // ---- kNN focus: selected drug + its 5 most similar drugs ----
   useEffect(() => {
@@ -166,6 +203,7 @@ export function NetworkCanvas() {
     if (!g || !svg) return;
     const nodeEls = [...svg.querySelectorAll<SVGGElement>('g[data-id]')];
     const lineEls = [...svg.querySelectorAll<SVGLineElement>('line.link')];
+    const hitLineEls = [...svg.querySelectorAll<SVGLineElement>('line.hit')];
     const apply = () => {
       const s = useStore.getState();
       const visible = visibleIds(g, s.filters);
@@ -187,6 +225,7 @@ export function NetworkCanvas() {
         el.classList.toggle('is-dimmed', !!lit && !(focus && (a === focus || b === focus)) && !(lit.has(a) && lit.has(b) && s.similarFocus));
         el.classList.toggle('is-active', !!s.selectedId && (a === s.selectedId || b === s.selectedId));
       }
+      for (const el of hitLineEls) el.classList.toggle('is-faded', !!visible && !(visible.has(el.dataset.s!) && visible.has(el.dataset.t!)));
       const sel = s.selectedId ? g.byId.get(s.selectedId) : undefined;
       linksRef.current?.setAttribute('class', `${styles.links} ${sel ? hueClass(sel, g, s.colorBy) : ''}`);
     };
@@ -217,7 +256,7 @@ export function NetworkCanvas() {
   )), [g]);
 
   const hitEls = useMemo(() => g?.links.map((l) => (
-    <line key={`${l.source}>${l.target}`} data-s={l.source} data-t={l.target} className={styles.hit}
+    <line key={`${l.source}>${l.target}`} data-s={l.source} data-t={l.target} className={`hit ${styles.hit}`}
       onMouseEnter={() => lens.show({
         keys: [`edge.${l.type}`],
         params: { source: g.byId.get(l.source)!.label, target: g.byId.get(l.target)!.label },
@@ -253,13 +292,17 @@ export function NetworkCanvas() {
     : 'Loading network';
 
   return (
-    <svg ref={svgRef} className={`${styles.svg}${showBridges ? '' : ' hide-bridges'}`} role="img" aria-label={summary}
-      onClick={() => selectNode(null)}>
-      <g ref={viewRef}>
-        <g ref={linksRef} className={styles.links}>{linkEls}</g>
-        <g>{hitEls}</g>
-        <g>{nodeEls}</g>
-      </g>
-    </svg>
+    <>
+      <svg ref={svgRef} role="img" aria-label={`${summary} Press + or − to zoom, 0 to fit.`} tabIndex={0}
+        className={`${styles.svg}${showBridges ? '' : ' hide-bridges'}${isolateMode === 'hide' ? ' isolate-hide' : ''}`}
+        onClick={() => selectNode(null)} onKeyDown={onKey}>
+        <g ref={viewRef}>
+          <g ref={linksRef} className={styles.links}>{linkEls}</g>
+          <g>{hitEls}</g>
+          <g>{nodeEls}</g>
+        </g>
+      </svg>
+      <ZoomControls onZoom={onZoom} />
+    </>
   );
 }

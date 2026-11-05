@@ -1,7 +1,7 @@
 // Lucide (MIT) icons, imported one by one so the bundle only carries what is used.
 export {
-  Brain, Building2, ChevronDown, Copy, Crosshair, FlaskConical, Github, Heart,
-  Pill, Ribbon, Search, ShieldCheck, TriangleAlert, Weight, X,
+  Brain, Building2, ChevronDown, Copy, Crosshair, FlaskConical, Github, Heart, Maximize2, Minus,
+  Pill, Plus, Ribbon, RotateCcw, Search, ShieldCheck, TriangleAlert, Weight, X,
 } from 'lucide-react';
 import { Brain, Heart, Ribbon, Weight, type LucideIcon } from 'lucide-react';
 import type { Area } from '../lib/types';
